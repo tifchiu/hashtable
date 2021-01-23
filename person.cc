@@ -1,6 +1,6 @@
 #include "person.h"
 
-Person::Person(string name, int age) : name{name}, age{age} {}
+Person::Person(string name, int age) : name{name}, age{age}, next{nullptr} {}
 
 ostream &operator<<(ostream &out, const Person & p) {
     out << "Name: " + p.name << endl;

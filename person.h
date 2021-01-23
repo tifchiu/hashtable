@@ -9,6 +9,7 @@ using namespace std;
 class Person {
     string name;
     int age;
+    Person * next;
     //
     public:
     Person(string name, int age);
