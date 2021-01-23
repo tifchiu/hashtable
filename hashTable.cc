@@ -20,23 +20,30 @@ hashTable::~hashTable() {
 bool hashTable::hash_table_insert(Person * p) {
     if (p == nullptr) return false;
     int index = hash_func(p->name);
-    // has duplicate value;
-    if (hash_table[index] != nullptr) {
-        return false;
+    // method for handling collissions: Linear probing
+    // if our hash location is populated, keep find the next empty space
+    for (int i=0; i < TABLE_SIZE; i++) {
+        int try = (i + index) % TABLE_SIZE;
+        if (hash_table[try] == nullptr) {
+            hash_table[try] = p;
+            return true;
+        }
     }
-    hash_table[index] = p;
     return true;
 }
 
 Person * hashTable::hash_table_delete(string name) {
     int index = hash_func(name);
-    if (hash_table[index] != nullptr) {
-        Person * tmp = hash_table[index];
-        hash_table[index] = nullptr;
-        return tmp;
-    } else {
-        return nullptr;
+
+    for (int i=0; i < TABLE_SIZE; i++) {
+        int try = (i + index) % TABLE_SIZE;
+        if (hash_table[try] != nullptr && hash_table[try]->name == name) {
+            Person * temp = hash_table[try];
+            hash_table[try] = nullptr;
+            return temp;
+        }
     }
+    return nullptr;
 }
 
 unsigned int hashTable::hash_func(string name){
@@ -52,11 +59,14 @@ unsigned int hashTable::hash_func(string name){
 
 Person * hashTable::hash_table_lookup(string name) {
     int index = hash_func(name);
-    if (hash_table[index] != nullptr && name == hash_table[index]->name) {
-        return hash_table[index];
-    } else {
-        return nullptr;
+    
+    for (int i=0; i < TABLE_SIZE; i++) {
+        int try = (i + index) % TABLE_SIZE;
+        if (hash_table[try] != nullptr && hash_table[try]->name == name) {
+            return hash_table[try];
+        }
     }
+    return nullptr;
 }
 
 void hashTable::print() {
